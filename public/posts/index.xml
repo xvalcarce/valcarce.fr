@@ -1,0 +1,109 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on Xavier Valcarce</title>
+        <link>localhost/posts/</link>
+        <description>Recent content in Posts on Xavier Valcarce</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+        <lastBuildDate>Thu, 06 Feb 2020 00:00:00 +0000</lastBuildDate>
+        <atom:link href="localhost/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Julia - One-Time Pad (XOR)</title>
+            <link>localhost/posts/onetimepadjl/</link>
+            <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+            
+            <guid>localhost/posts/onetimepadjl/</guid>
+            <description>Disclaimer This is a pet project to help me understand the relatively new programming language Julia. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.
+Algorithm objective An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit.</description>
+            <content type="html"><![CDATA[<h2 id="disclaimer">Disclaimer</h2>
+<p>This is a pet project to help me understand the relatively new programming language <a href="https://julialang.org">Julia</a>. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.</p>
+<h2 id="algorithm-objective">Algorithm objective</h2>
+<p>An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit. We want the code to also be able to do the reverse; given a key and an encrypted file, run the XOR to get the original file.</p>
+<h2 id="code">Code</h2>
+<h3 id="part-1-arguments-and-help">Part 1: Arguments and help</h3>
+<pre><code>HELP = &quot;xore.jl usage:
+    xore.jl [enc|dec] [filename [keyfile]]
+    Options:
+        enc : encrypt file. Generated file will be the filename.enc and generated key filename.key
+        dec : decrypt file. [keyfile] argument required
+        &quot;
+
+# Test arguments
+@assert (length(ARGS)==2 || length(ARGS)==3) HELP
+@assert (ARGS[1]==&quot;enc&quot; || ARGS[1]==&quot;dec&quot;) HELP
+@assert isfile(ARGS[2]) &quot;Can not find provided file&quot;
+if ARGS[1]==&quot;dec&quot;
+    @assert length(ARGS)==3 &quot;Keyfile argument missing&quot;
+    @assert isfile(ARGS[3]) &quot;Can not find provided keyfile&quot;
+end
+
+# Filling variable
+filename = ARGS[2]
+extension = findlast(isequal('.'),ARGS[2])
+if extension!=nothing
+    file = filename[1:extension-1]
+else
+    file = filename
+end
+</code></pre><p>This the meta part of our program. Our program takes 2 or 3 arguments. The first one, either enc or dec set the mode of our program (decryption or encryption mode). The second one is the file to encrypt/decrypt. Finally, if the decryption mode is trigge, we need the file containing the key .
+Some checks are made using assert to ensure that provided arguments, and arguments number, are correct.</p>
+<h3 id="part-2-io">Part 2: I/O</h3>
+<p>Let’s now study how one can read a given file and store it into a variable.</p>
+<pre><code># Read file to byte arrays
+f = open(filename, &quot;r&quot;)
+data = UInt8[]
+readbytes!(f,data,Inf)
+close(f)
+</code></pre><p>This open the file with the open function — argument r is for read only. We then create an array of type UInt8. Finally, we read the file by byte, and store them in the previously declared array. The Inf argument is to read to entire file — this way we don’t need to provide the length (number of byte) of our file.</p>
+<h3 id="part-3-encryption">Part 3: Encryption</h3>
+<p>Here is the encryption section in which we generate the key, encrypt the file and save both the encrypted version of the file and the key.</p>
+<pre><code>if ARGS[1]==&quot;enc&quot;
+    # Genearting key of the file's size
+    key = rand(UInt8,size(data)[1])
+
+    # Generating encrypted file
+    enc = UInt8[]
+    for (i,d) in enumerate(data)
+        push!(enc,xor(d,key[i]))
+    end
+
+    # Saving everything
+    @assert !isfile(file*&quot;.scrt&quot;) &quot;enc.scrt file already exist in current directory&quot;
+    enc_file = open(file*&quot;.scrt&quot;, &quot;w&quot;)
+    write(enc_file, enc)
+    close(enc_file)
+
+    @assert !isfile(file*&quot;.key&quot;) &quot;enc.key file already exist in current directory&quot;
+    key_file = open(file*&quot;.key&quot;, &quot;w&quot;)
+    write(key_file, key)
+    close(key_file)
+</code></pre><p>The key is generated using the rand function. The key consists of an UInt8 array of the file’s size (number of byte).
+We then proceed to the encryption by XOR-ing the file and the key, storing everything in the newly created enc array. The XOR bit-wise operation is done by the built-in xor function.
+Finally, we save the encrypted file as well as the key using the name of the file (without the extension). A small check is made for the existence of such file, in order not to erase unintentionally potential files.</p>
+<h3 id="part-3-decryption">Part 3: Decryption</h3>
+<pre><code>else
+    # Read the keyfile
+    k = open(ARGS[3], &quot;r&quot;)
+    key = UInt8[]
+    readbytes!(k,key,Inf)
+    close(k)
+
+    # Decryption
+    dec = UInt8[]
+    for (i,d) in enumerate(data)
+        push!(dec,xor(d,key[i]))
+    end
+
+    #Saving decrypted file
+    dec_file = open(file*&quot;.clear&quot;, &quot;w&quot;)
+    write(dec_file, dec)
+    close(dec_file)
+end
+</code></pre><p>This is the decryption mode. It works in a similar manner as the encryption process, no further explanation are required to understand this part of the code.</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>
