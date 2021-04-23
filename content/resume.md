@@ -22,7 +22,7 @@ __Aug. 2020 to present__
         - [Self-testing two-qubit maximally entangled states from generalized CHSH test](https://arxiv.org/abs/2011.03047) arXiv:2011.03047  
 	**Talks & Conferences**:  
 		- Qhack 2021 - Participation to the Qhack challenges (qualified) 
-		- GDR IQFA'11 - Poster on [Robust self-testing of the singlet](https://valcarce.fr/poster/iqfa11.png)  
+		- GDR IQFA'11 - Poster on [Robust self-testing of the singlet](https://valcarce.fr/physics/posterIQFA_Valcarce.png)  
 
 __Sept. 2018 to Aug. 2020__
 :   **Research Assistant** at *Quantum Optics Theory Group (Nicolas Sangouard), University of Basel (Basel, Switzerland)*  
