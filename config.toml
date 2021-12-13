@@ -1,4 +1,4 @@
-baseURL = "localhost"
+baseURL = "/"
 title = "Xavier Valcarce"
 languageCode = "en-us"
 theme = "nord-hello-friend-ng"
