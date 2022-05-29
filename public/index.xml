@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Xavier Valcarce</title>
+    <link>/</link>
+    <description>Recent content on Xavier Valcarce</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 22 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quantum bound on the CHSH inequality: NPA in Julia with NCTSSOS</title>
+      <link>/posts/npa_julia/</link>
+      <pubDate>Sun, 22 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/npa_julia/</guid>
+      <description>The CHSH inequality is used to grasp the non-local nature of bipartite games in which each party perform one out of two dichotomic measurements on a shared state. The Tsilerson bound of the CHSH inequality is the maximum violation of this inequality under the best quantum strategy [1]. I.e. the highest CHSH score that can be obtained over all quantum states and measurements.
+Finding the best CHSH score can be seen as an optimization of a polynomial of non-commutative variables.</description>
+    </item>
+    
+    <item>
+      <title>Python - LP/SDP for Quantum Information with PICOS</title>
+      <link>/posts/picos_quantuminfo/</link>
+      <pubDate>Mon, 13 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/picos_quantuminfo/</guid>
+      <description>SDP interface and Solver PICOS is the Python interface I recommend to write/solve LP/SDP problem. It is under the GPLv3 free-license, probably supports your favorite solver, has crucial features for quantum information and, most importantly, has an attentive and friendly developer community.
+Regarding SDP solvers, I had best performance with MOSEK. Sadly, this solver is proprietary (if price is of your concern, MOSEK offers a free one-year license for students). CVXOPT is a relatively good free-licensed alternative to MOSEK.</description>
+    </item>
+    
+    <item>
+      <title>Setup DNSCrypt with NetworkManager</title>
+      <link>/posts/dnscrypt/</link>
+      <pubDate>Tue, 20 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/dnscrypt/</guid>
+      <description>To avoid your ISP eavesdropping on website you visit and other url you try to resolv, using privacy friendly DNS server is a necessity.
+dnscrypt-proxy supports the encryption of your DNS request over HTTPS, and makes use of the DNSCrypt protocol. Here is a small guide to set this up alongside NetworkManager.
+Installation Install the dnscrypt package provided by your distribution:
++ dnscrypt-proxy for ArchLinux
++ dnscrypt-proxy for Debian-based distribution</description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>/about/</link>
+      <pubDate>Sun, 01 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Xavier Valcarce 🌐 valcarce.fr gitlab.com/plut0n xavier.valcarce _at_ unibas.ch
+ Interests Quantum Information Theory, Quantum Computing and Communication, Machine Learning, Numerical Analysis
+ Experiences  Aug. 2020 to present PhD student at Institut de Physique Théorique, CEA, CNRS, Université Paris Saclay under the supervision of Nicolas Sangouard
+Publications:
+- Self-testing two-qubit maximally entangled states from generalized CHSH test arXiv:2011.xxxx Sept. 2018 to Aug. 2020 Research Assistant (w/ a Master Degree) at Quantum Optics Theory Group (Nicolas Sangouard), University of Basel (Basel, Switzerland)</description>
+    </item>
+    
+    <item>
+      <title>Xavier Valcarce</title>
+      <link>/resume/</link>
+      <pubDate>Sun, 01 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>Interests Quantum Information Theory, Quantum Computing and Communication, (Quantum) Machine Learning
+ Experiences  Aug. 2020 to present PhD student at Institut de Physique Théorique, CEA, CNRS, Université Paris Saclay under the supervision of Nicolas Sangouard
+Publications:
+- Self-testing two-qubit maximally entangled states from generalized CHSH test arXiv:2011.03047
+Talks &amp;amp; Conferences:
+- Qhack 2021 - Participation to the Qhack challenges (qualified) - GDR IQFA&#39;11 - Poster on Robust self-testing of the singlet Sept.</description>
+    </item>
+    
+    <item>
+      <title>Julia - One-Time Pad (XOR)</title>
+      <link>/posts/onetimepadjl/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/onetimepadjl/</guid>
+      <description>Disclaimer This is a pet project to help me understand the relatively new programming language Julia. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.
+Algorithm objective An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit.</description>
+    </item>
+    
+  </channel>
+</rss>

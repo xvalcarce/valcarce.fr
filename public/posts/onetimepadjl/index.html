@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="map[name:Xavier Valcarce]">
+<meta name="description"
+    content="Disclaimer This is a pet project to help me understand the relatively new programming language Julia. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.
+Algorithm objective An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/onetimepadjl/" />
+
+
+<title>
+    
+    Julia - One-Time Pad (XOR) :: Xavier Valcarce  — Physicist
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.cf8ace3beedc6917b80a38cba3df1c95b0c39a0c7f61389c93bb3cc3cce41625.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627"><meta itemprop="name" content="Julia - One-Time Pad (XOR)">
+<meta itemprop="description" content="Disclaimer This is a pet project to help me understand the relatively new programming language Julia. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.
+Algorithm objective An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit."><meta itemprop="datePublished" content="2020-02-06T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-02-06T00:00:00+00:00" />
+<meta itemprop="wordCount" content="607"><meta itemprop="image" content="/"/>
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="Julia - One-Time Pad (XOR)"/>
+<meta name="twitter:description" content="Disclaimer This is a pet project to help me understand the relatively new programming language Julia. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.
+Algorithm objective An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit."/>
+
+
+
+
+<meta property="article:published_time" content="2020-02-06 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">valcarce.fr $ </span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/posts/">Posts</a></li><li><a href="/resume/">Resume</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>3 minutes
+
+            
+
+            </p>
+        </div>
+
+        <article>
+            <h1 class="post-title"><a href="/posts/onetimepadjl/">Julia - One-Time Pad (XOR)</a></h1>
+
+            
+
+            <div class="post-content">
+                <h2 id="disclaimer">Disclaimer</h2>
+<p>This is a pet project to help me understand the relatively new programming language <a href="https://julialang.org">Julia</a>. I don’t guarantee that the code in this blog post is optimal, nor respect all Julia conventions.</p>
+<h2 id="algorithm-objective">Algorithm objective</h2>
+<p>An implementation of the one-time pad encryption algorithm, based on the XOR gate. The code should be able to encrypt any given file by generating a key of this file’s size and XORing the file with the key, bit-by-bit. We want the code to also be able to do the reverse; given a key and an encrypted file, run the XOR to get the original file.</p>
+<h2 id="code">Code</h2>
+<h3 id="part-1-arguments-and-help">Part 1: Arguments and help</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-julia" data-lang="julia"><span style="display:flex;"><span>HELP <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;xore.jl usage:
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    xore.jl [enc|dec] [filename [keyfile]]
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    Options:
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">        enc : encrypt file. Generated file will be the filename.enc and generated key filename.key
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">        dec : decrypt file. [keyfile] argument required
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">        &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4"># Test arguments</span>
+</span></span><span style="display:flex;"><span>@assert (length(<span style="color:#8be9fd;font-style:italic">ARGS</span>)<span style="color:#ff79c6">==</span><span style="color:#bd93f9">2</span> <span style="color:#ff79c6">||</span> length(<span style="color:#8be9fd;font-style:italic">ARGS</span>)<span style="color:#ff79c6">==</span><span style="color:#bd93f9">3</span>) HELP
+</span></span><span style="display:flex;"><span>@assert (<span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">1</span>]<span style="color:#ff79c6">==</span><span style="color:#f1fa8c">&#34;enc&#34;</span> <span style="color:#ff79c6">||</span> <span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">1</span>]<span style="color:#ff79c6">==</span><span style="color:#f1fa8c">&#34;dec&#34;</span>) HELP
+</span></span><span style="display:flex;"><span>@assert isfile(<span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">2</span>]) <span style="color:#f1fa8c">&#34;Can not find provided file&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">1</span>]<span style="color:#ff79c6">==</span><span style="color:#f1fa8c">&#34;dec&#34;</span>
+</span></span><span style="display:flex;"><span>    @assert length(<span style="color:#8be9fd;font-style:italic">ARGS</span>)<span style="color:#ff79c6">==</span><span style="color:#bd93f9">3</span> <span style="color:#f1fa8c">&#34;Keyfile argument missing&#34;</span>
+</span></span><span style="display:flex;"><span>    @assert isfile(<span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">3</span>]) <span style="color:#f1fa8c">&#34;Can not find provided keyfile&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4"># Filling variable</span>
+</span></span><span style="display:flex;"><span>filename <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">2</span>]
+</span></span><span style="display:flex;"><span>extension <span style="color:#ff79c6">=</span> findlast(isequal(<span style="color:#f1fa8c">&#39;.&#39;</span>),<span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">2</span>])
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">if</span> extension!<span style="color:#ff79c6">=</span><span style="color:#8be9fd;font-style:italic">nothing</span>
+</span></span><span style="display:flex;"><span>    file <span style="color:#ff79c6">=</span> filename[<span style="color:#bd93f9">1</span><span style="color:#ff79c6">:</span>extension<span style="color:#ff79c6">-</span><span style="color:#bd93f9">1</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">else</span>
+</span></span><span style="display:flex;"><span>    file <span style="color:#ff79c6">=</span> filename
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">end</span>
+</span></span></code></pre></div><p>This the meta part of our program. Our program takes 2 or 3 arguments. The first one, either enc or dec set the mode of our program (decryption or encryption mode). The second one is the file to encrypt/decrypt. Finally, if the decryption mode is trigge, we need the file containing the key .
+Some checks are made using assert to ensure that provided arguments, and arguments number, are correct.</p>
+<h3 id="part-2-io">Part 2: I/O</h3>
+<p>Let’s now study how one can read a given file and store it into a variable.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-julia" data-lang="julia"><span style="display:flex;"><span><span style="color:#6272a4"># Read file to byte arrays</span>
+</span></span><span style="display:flex;"><span>f <span style="color:#ff79c6">=</span> open(filename, <span style="color:#f1fa8c">&#34;r&#34;</span>)
+</span></span><span style="display:flex;"><span>data <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">UInt8</span>[]
+</span></span><span style="display:flex;"><span>readbytes!(f,data,<span style="color:#8be9fd;font-style:italic">Inf</span>)
+</span></span><span style="display:flex;"><span>close(f)
+</span></span></code></pre></div><p>This open the file with the open function — argument r is for read only. We then create an array of type UInt8. Finally, we read the file by byte, and store them in the previously declared array. The Inf argument is to read to entire file — this way we don’t need to provide the length (number of byte) of our file.</p>
+<h3 id="part-3-encryption">Part 3: Encryption</h3>
+<p>Here is the encryption section in which we generate the key, encrypt the file and save both the encrypted version of the file and the key.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-julia" data-lang="julia"><span style="display:flex;"><span><span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">1</span>]<span style="color:#ff79c6">==</span><span style="color:#f1fa8c">&#34;enc&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4"># Genearting key of the file&#39;s size</span>
+</span></span><span style="display:flex;"><span>    key <span style="color:#ff79c6">=</span> rand(<span style="color:#8be9fd">UInt8</span>,size(data)[<span style="color:#bd93f9">1</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4"># Generating encrypted file</span>
+</span></span><span style="display:flex;"><span>    enc <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">UInt8</span>[]
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> (i,d) <span style="color:#ff79c6">in</span> enumerate(data)
+</span></span><span style="display:flex;"><span>        push!(enc,xor(d,key[i]))
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4"># Saving everything</span>
+</span></span><span style="display:flex;"><span>    @assert <span style="color:#ff79c6">!</span>isfile(file<span style="color:#ff79c6">*</span><span style="color:#f1fa8c">&#34;.scrt&#34;</span>) <span style="color:#f1fa8c">&#34;enc.scrt file already exist in current directory&#34;</span>
+</span></span><span style="display:flex;"><span>    enc_file <span style="color:#ff79c6">=</span> open(file<span style="color:#ff79c6">*</span><span style="color:#f1fa8c">&#34;.scrt&#34;</span>, <span style="color:#f1fa8c">&#34;w&#34;</span>)
+</span></span><span style="display:flex;"><span>    write(enc_file, enc)
+</span></span><span style="display:flex;"><span>    close(enc_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    @assert <span style="color:#ff79c6">!</span>isfile(file<span style="color:#ff79c6">*</span><span style="color:#f1fa8c">&#34;.key&#34;</span>) <span style="color:#f1fa8c">&#34;enc.key file already exist in current directory&#34;</span>
+</span></span><span style="display:flex;"><span>    key_file <span style="color:#ff79c6">=</span> open(file<span style="color:#ff79c6">*</span><span style="color:#f1fa8c">&#34;.key&#34;</span>, <span style="color:#f1fa8c">&#34;w&#34;</span>)
+</span></span><span style="display:flex;"><span>    write(key_file, key)
+</span></span><span style="display:flex;"><span>    close(key_file)
+</span></span></code></pre></div><p>The key is generated using the rand function. The key consists of an UInt8 array of the file’s size (number of byte).
+We then proceed to the encryption by XOR-ing the file and the key, storing everything in the newly created enc array. The XOR bit-wise operation is done by the built-in xor function.
+Finally, we save the encrypted file as well as the key using the name of the file (without the extension). A small check is made for the existence of such file, in order not to erase unintentionally potential files.</p>
+<h3 id="part-3-decryption">Part 3: Decryption</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-julia" data-lang="julia"><span style="display:flex;"><span><span style="color:#ff79c6">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4"># Read the keyfile</span>
+</span></span><span style="display:flex;"><span>    k <span style="color:#ff79c6">=</span> open(<span style="color:#8be9fd;font-style:italic">ARGS</span>[<span style="color:#bd93f9">3</span>], <span style="color:#f1fa8c">&#34;r&#34;</span>)
+</span></span><span style="display:flex;"><span>    key <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">UInt8</span>[]
+</span></span><span style="display:flex;"><span>    readbytes!(k,key,<span style="color:#8be9fd;font-style:italic">Inf</span>)
+</span></span><span style="display:flex;"><span>    close(k)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4"># Decryption</span>
+</span></span><span style="display:flex;"><span>    dec <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">UInt8</span>[]
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> (i,d) <span style="color:#ff79c6">in</span> enumerate(data)
+</span></span><span style="display:flex;"><span>        push!(dec,xor(d,key[i]))
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">#Saving decrypted file</span>
+</span></span><span style="display:flex;"><span>    dec_file <span style="color:#ff79c6">=</span> open(file<span style="color:#ff79c6">*</span><span style="color:#f1fa8c">&#34;.clear&#34;</span>, <span style="color:#f1fa8c">&#34;w&#34;</span>)
+</span></span><span style="display:flex;"><span>    write(dec_file, dec)
+</span></span><span style="display:flex;"><span>    close(dec_file)
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">end</span>
+</span></span></code></pre></div><p>This is the decryption mode. It works in a similar manner as the encryption process, no further explanation are required to understand this part of the code.</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>607 Words</p>
+
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>6060-02-02 00:60</p>
+        </div>
+
+        
+            <div class="pagination">
+                <div class="pagination__title">
+                    <span class="pagination__title-h">Read other posts</span>
+                    <hr />
+                </div>
+
+                <div class="pagination__buttons">
+                    
+                        <span class="button previous">
+                            <a href="/posts/dnscrypt/">
+                                <span class="button__icon">←</span>
+                                <span class="button__text">Setup DNSCrypt with NetworkManager</span>
+                            </a>
+                        </span>
+                    
+
+                    
+                </div>
+            </div>
+        
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2022</span>
+            
+            
+                <span><a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a></span>
+            <span><a href="/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+	
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.e9104ec7f3e4b984c7f16d4ae9525f96d56c5cfd1c6eb78b9ddf3d3e675d3b40c222fd229e5ce55d43569e87a05921c5cad0ec1d686dcb09b62bcd77cf7cbe9e.js" integrity="sha512-6RBOx/PkuYTH8W1K6VJfltVsXP0cbreLnd89PmddO0DCIv0inlzlXUNWnoegWSHFytDsHWhtywm2K813z3y&#43;ng=="></script>
+
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    </body>
+</html>
