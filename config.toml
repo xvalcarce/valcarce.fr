@@ -40,8 +40,8 @@ paginate = 10
     url  = "mailto:xvalcarce@protonmail.com"
 
   [[params.social]]
-    name = "gitlab"
-    url  = "https://gitlab.com/plut0n"
+    name = "github"
+    url  = "https://github.com/xvalcarce"
 
   [[params.social]]
 	name = "scholar"
