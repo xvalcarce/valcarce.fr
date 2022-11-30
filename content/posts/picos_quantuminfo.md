@@ -8,9 +8,9 @@ type = ["posts","post"]
 
 ## SDP interface and Solver
 
-To write LP/SDP in Python I recommend the [PICOS](https://gitlab.com/picos-api/picos) interface. It is under the GPLv3 free-license, probably supports your favorite solver, has crucial features for quantum information and, most importantly, has an attentive and firendly developper community.  
+[PICOS](https://gitlab.com/picos-api/picos) is the Python interface I recommend to write/solve LP/SDP problem. It is under the GPLv3 free-license, probably supports your favorite solver, has crucial features for quantum information and, most importantly, has an attentive and friendly developer community.  
 
-Regarding SDP solvers, in my experience, nothing compares to [MOSEK](https://www.mosek.com). Sadly, this solver is proprietary (if price is of your concern, MOSEK offer a free one-year license for students). [CVXOPT](https://cvxopt.org) is a relatively good free-licensed alternative to MOSEK. However, in my experience, CXOPT have memory-leakage issue, bugs when solving complex SDP, and an important optimization time compare to MOSEK.  
+Regarding SDP solvers, I had best performance with [MOSEK](https://www.mosek.com). Sadly, this solver is proprietary (if price is of your concern, MOSEK offers a free one-year license for students). [CVXOPT](https://cvxopt.org) is a relatively good free-licensed alternative to MOSEK. However, in my experience, CVXOPT might lead to some issues (memory-leakage, unstable with complex SDP), and an important optimization time compare to MOSEK.  
 
 ## LP: Local correlations, a membership problem
 
@@ -25,9 +25,9 @@ Consider a scenario where a state is shared between `N` parties, each having `m`
 To know if correlations of a given scenario are local, it is sufficient to check if these correlations belong, i.e. are "inside", the local polytope.  
 
 Correlations are in a vector of probability \\[p = \{p(a_1 \dots a_N|x_1 \dots x_N)\}\\] for all inputs x_i and output a_i.
-The vertices of the local polytope are the derministic strategies `p_d`, i.e. `p` is composed of 0s and 1s. 
-The local polytope can be written as a the set of its vertices `L=p_d`.  
-Here a simple function that construct the local polytope
+The vertices of the local polytope are the deterministic strategies `p_d`, i.e. `p` is composed of 0s and 1s. 
+The local polytope can be written as the set of its vertices `L=p_d`.  
+Here a simple function that construct such a set
 
 ```python
 def local_polytope(N,m,d):
@@ -65,6 +65,7 @@ def local_polytope(N,m,d):
 ```
 
 A correlation vector `p` is described by a local model iff `p` can be written as a convex sum of the local-polytope vertices.
+I.e. iff `p` is inside the local polytope.
 This is a linear programming problem: find a vector `v` such that `v*L=p`, with `sum(v)=1` (convexity) and `v>0` (each element of `v` positive). 
 If `v` exists then `p` is compatible with a local model.  
 
@@ -106,6 +107,7 @@ def local_correlation(polytope):
 ```
 
 We verify our implementation with two examples, one local, one non-local
+
 ```python
 L = local_polytope(2,2,2)
 p_l = local_correlation(L)
@@ -117,6 +119,7 @@ print(is_local(p_nl,L))    # Output False
 ## (Complex) SDP: Maximize a Bell inequality
 
 For this section, import and constant definition needed
+
 ```python
 import numpy as np
 import picos as pcs
@@ -129,7 +132,7 @@ K = np.kron
 
 ```
 
-Consider a scenario where Alice and Bob share a two-qubit state `rho`. They each have two measurements `A0,A1` for Alice, `B0,B1` for Bob.
+Consider a scenario where Alice and Bob share a two-qubit state `rho`. They each have two measurements : `A0,A1` for Alice, `B0,B1` for Bob.
 These measurements are of the form \\[M_i = \cos(\theta)\sigma_x + (-1)^i \sin(\theta)\sigma_z\\] with `i` the measurement choice, 0 or 1, and `θ` the angle between measurement 0 and 1. Alice set `θ=a` while Bob set `θ=b`.  
 A bell operator can be seen as a linear combination of the four correlators `AxBy`. For example the well-known CHSH operator `S=A0(B0+B1)+A1(B0-B1)`. Here is a function to generate such operators (return CHSH by default)
 
@@ -161,7 +164,7 @@ def bell_op(a=np.pi/4,b=np.pi/4,coeff=[1,1,1,-1]):
     return bell
 ```
 
-The CHSH value achieved by `rho` is given by the linear operation \\[\text{Tr}\[S\rho\]\\]. Since all two-qubits state are semi-positive definite and the CHSH value is linear (in `rho`) we can use semi-definite programming (SDP) to find the maximum CHSH value a two-qubit state can achieve. Such SDP reads
+The CHSH score achieved by `rho` is given by the linear operation \\[\text{Tr}\[S\rho\]\\]. Since all two-qubits state are semi-positive definite and the CHSH value is linear (in `rho`) we can use semi-definite programming (SDP) to find the maximum CHSH score a two-qubit state can achieve. Such an SDP reads
 \\[ \max_\rho \qquad \text{Tr}\[S\rho\]\\]
 \\[ \text{s.t.} \qquad \rho \succeq 0\\]
 \\[\\qquad \quad \text{Tr}\[\rho\]=1\\]
@@ -227,7 +230,7 @@ State reaching this violation:
 [-7.32e-02-j2.73e-17 -1.77e-01-j4.77e-17 -1.77e-01-j7.19e-17  7.32e-02-j0.00e+00]
 ```
 
-We obtain the expectedviolation of `2.8284...` with corresponds to 2√2 achieved by Bell states [2].
+We obtain the expected violation of `2.8284...` which corresponds to 2√2 achieved by Bell states [2].
 
 
 ## References

@@ -6,7 +6,7 @@ type = ["posts","post"]
   name = "Xavier Valcarce"
 +++
 
-The CHSH inequality is used to grasp the non-local nature of a bipartite game where each party have two dichotomic measurements.
+The CHSH inequality is used to grasp the non-local nature of bipartite games in which each party perform one out of two dichotomic measurements on a shared state.
 The Tsilerson bound of the CHSH inequality is the maximum violation of this inequality under the best quantum strategy [1].
 I.e. the highest CHSH score that can be obtained over all quantum states and measurements.  
 
